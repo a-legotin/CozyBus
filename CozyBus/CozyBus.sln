@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CozyBus.Core", "CozyBus.Core\CozyBus.Core.csproj", "{3CBE8E72-586F-468E-9B10-001F48573614}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CozyBus.Tests", "CozyBus.Tests\CozyBus.Tests.csproj", "{FB1A0255-33E0-4583-8E79-D274285EDD9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CozyBus.InMemory", "CozyBus.InMemory\CozyBus.InMemory.csproj", "{6C02684E-7A57-4A10-AF65-8F63DD567660}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{2FFE0736-A4BA-4D26-967F-1C2316485760}"
+ProjectSection(SolutionItems) = preProject
+	..\.gitignore = ..\.gitignore
+	..\.gitlab-ci.yml = ..\.gitlab-ci.yml
+	..\README.md = ..\README.md
+EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3CBE8E72-586F-468E-9B10-001F48573614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CBE8E72-586F-468E-9B10-001F48573614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CBE8E72-586F-468E-9B10-001F48573614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CBE8E72-586F-468E-9B10-001F48573614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB1A0255-33E0-4583-8E79-D274285EDD9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB1A0255-33E0-4583-8E79-D274285EDD9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB1A0255-33E0-4583-8E79-D274285EDD9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB1A0255-33E0-4583-8E79-D274285EDD9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C02684E-7A57-4A10-AF65-8F63DD567660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C02684E-7A57-4A10-AF65-8F63DD567660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C02684E-7A57-4A10-AF65-8F63DD567660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C02684E-7A57-4A10-AF65-8F63DD567660}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
