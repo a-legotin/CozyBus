@@ -16,8 +16,8 @@ publish:
   stage: publish
   script:
     - dotnet pack CozyBus/CozyBus.sln -c Release
-    - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username alexander --password $COMMON_PASSWORD
-    - dotnet nuget source add -name github -source "https://nuget.pkg.github.com/a-legotin/CozyBus/index.json" --username $GITHUB_USER --password $COMMON_PASSWORD
+    - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username alexander --password $COMMON_PASSWORD --store-password-in-clear-text
+    - dotnet nuget source add -name github -source "https://nuget.pkg.github.com/a-legotin/CozyBus/index.json" --username $GITHUB_USER --password $COMMON_PASSWORD --store-password-in-clear-text
     - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab
   only:
     - main
