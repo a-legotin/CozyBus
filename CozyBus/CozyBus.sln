@@ -11,6 +11,7 @@ ProjectSection(SolutionItems) = preProject
 	..\.gitignore = ..\.gitignore
 	..\.gitlab-ci.yml = ..\.gitlab-ci.yml
 	..\README.md = ..\README.md
+	..\.github\workflows\dotnet.yml = ..\.github\workflows\dotnet.yml
 EndProjectSection
 EndProject
 Global

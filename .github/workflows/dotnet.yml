@@ -1,0 +1,32 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [closed]
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+        source-url: https://nuget.pkg.github.com/a-legotin/CozyBus/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}} 
+        
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build CozyBus/CozyBus.sln -c Release
+    - name: Pack
+      run: dotnet pack CozyBus/CozyBus.sln -c Release
+    - name: Push generated package to GitHub registry
+      run: dotnet nuget push CozyBus/CozyBus.Core/bin/Release/*.nupkg --skip-duplicate --no-symbols true
