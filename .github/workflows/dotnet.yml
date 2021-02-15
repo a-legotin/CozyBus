@@ -38,4 +38,4 @@ jobs:
       - name: Pack
         run: dotnet pack CozyBus/CozyBus.sln -c Release
       - name: Push generated package to GitHub registry
-        run: dotnet nuget push CozyBus/CozyBus.Core/bin/Release/*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/CozyBus/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+        run: dotnet nuget push CozyBus/CozyBus.Core/bin/Release/*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
