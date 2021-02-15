@@ -8,6 +8,7 @@
     <content url="file://$USER_HOME$/.nuget/packages/nunit3testadapter/3.16.1/build/netcoreapp2.1/NUnit3.TestAdapter.pdb" />
     <content url="file://$USER_HOME$/.nuget/packages/nunit3testadapter/3.16.1/build/netcoreapp2.1/nunit.engine.api.dll" />
     <content url="file://$USER_HOME$/.nuget/packages/nunit3testadapter/3.16.1/build/netcoreapp2.1/nunit.engine.dll" />
+    <content url="file://$MODULE_DIR$/../../../.github/workflows/dotnet.yml" />
     <content url="file://$MODULE_DIR$/../../../.gitignore" />
     <content url="file://$MODULE_DIR$/../../../.gitlab-ci.yml" />
     <content url="file://$MODULE_DIR$/../.." />

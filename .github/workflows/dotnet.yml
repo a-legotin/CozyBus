@@ -22,8 +22,6 @@ jobs:
       env:
           NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}} 
         
-    - name: Restore dependencies
-      run: dotnet restore
     - name: Build
       run: dotnet build CozyBus/CozyBus.sln -c Release
     - name: Pack
