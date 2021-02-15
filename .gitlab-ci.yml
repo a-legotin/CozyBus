@@ -20,4 +20,4 @@ publish:
     - dotnet nuget source add -name github -source "https://nuget.pkg.github.com/a-legotin/CozyBus/index.json" --username $GITHUB_USER --password $COMMON_PASSWORD
     - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab
   only:
-    - master
+    - main
