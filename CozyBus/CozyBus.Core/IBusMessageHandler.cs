@@ -2,9 +2,8 @@
 
 namespace CozyBus.Core
 {
-    public interface IBusMessageHandler<in TIntegrationEvent> : IBusMessageHandler
-        where TIntegrationEvent : IBusMessage
+    public interface IBusMessageHandler<in T> where T : IBusMessage
     {
-        Task Handle(TIntegrationEvent request);
+        Task Handle(T request);
     }
 }

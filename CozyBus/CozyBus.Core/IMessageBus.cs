@@ -1,15 +1,13 @@
-﻿namespace CozyBus.Core
+﻿using System;
+
+namespace CozyBus.Core
 {
-    public interface IMessageBus
+    public interface IMessageBus : IDisposable
     {
-        void Publish(IBusMessage message);
+        void Publish<T>(IBusMessage message)  where T : IBusMessage;
 
         void Subscribe<T, TH>()
             where T : IBusMessage
             where TH : IBusMessageHandler<T>;
-    }
-
-    public interface IBusMessageHandler
-    {
     }
 }
