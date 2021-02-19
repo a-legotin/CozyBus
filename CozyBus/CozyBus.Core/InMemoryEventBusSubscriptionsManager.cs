@@ -25,7 +25,7 @@ namespace CozyBus.Core
         {
             var eventName = GetEventKey<T>();
 
-            DoAddSubscription(typeof(TH), eventName, false);
+            DoAddSubscription(typeof(TH), eventName);
 
             if (!_eventTypes.Contains(typeof(T)))
                 _eventTypes.Add(typeof(T));
@@ -61,9 +61,7 @@ namespace CozyBus.Core
 
         public string GetEventKey<T>() => typeof(T).Name;
 
-        public event EventHandler<string> OnEventRemoved;
-
-        private void DoAddSubscription(Type handlerType, string eventName, bool isDynamic)
+        private void DoAddSubscription(Type handlerType, string eventName)
         {
             if (!HasSubscriptionsForEvent(eventName))
                 _handlers.Add(eventName, new List<SubscriptionInfo>());
@@ -73,7 +71,7 @@ namespace CozyBus.Core
                     $"Handler Type {handlerType.Name} already registered for '{eventName}'", nameof(handlerType));
 
             _handlers[eventName]
-                .Add(isDynamic ? SubscriptionInfo.Dynamic(handlerType) : SubscriptionInfo.Typed(handlerType));
+                .Add(new SubscriptionInfo(handlerType));
         }
 
 
@@ -92,8 +90,7 @@ namespace CozyBus.Core
 
         private void RaiseOnEventRemoved(string eventName)
         {
-            var handler = OnEventRemoved;
-            handler?.Invoke(this, eventName);
+            
         }
 
 

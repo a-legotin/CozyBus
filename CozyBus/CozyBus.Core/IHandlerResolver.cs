@@ -4,6 +4,6 @@ namespace CozyBus.Core
 {
     public interface IHandlerResolver
     {
-        Type Resolve(Type eventName);
+        Type Resolve(Type handlerType);
     }
 }
