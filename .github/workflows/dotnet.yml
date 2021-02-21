@@ -20,10 +20,12 @@ jobs:
         dotnet-version: 5.0.x
     - name: Add private GitHub registry to NuGet
       run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username  ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+    - name: Restore
+      run: dotnet restore CozyBus/CozyBus.sln --locked-mode
     - name: Build
-      run: dotnet build CozyBus/CozyBus.sln -c Release
+      run: dotnet build CozyBus/CozyBus.sln -c Release --no-restore
     - name: Test
-      run: dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj
+      run: dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj --no-build
       
   publish:
     runs-on: ubuntu-latest
@@ -37,11 +39,19 @@ jobs:
 
       - name: Add private GitHub registry to NuGet
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username  ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+      - name: Restore CozyBus.Core
+        run: dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
+      - name: Build CozyBus.Core
+        run: dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore
       - name: Pack CozyBus.Core
-        run: dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release
+        run: dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-build
       - name: Push generated CozyBus.Core package to GitHub registry
         run: dotnet nuget push CozyBus/CozyBus.Core/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+      - name: Restore All
+        run: dotnet restore CozyBus/CozyBus.sln --locked-mode
+      - name: Build All
+        run: dotnet pack CozyBus/CozyBus.sln -c Release --no-restore
       - name: Pack All
-        run: dotnet pack CozyBus/CozyBus.sln -c Release
+        run: dotnet pack CozyBus/CozyBus.sln -c Release --no-build
       - name: Push generated CozyBus.InMemory package to GitHub registry
         run: dotnet nuget push CozyBus/CozyBus.InMemory/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
