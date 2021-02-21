@@ -6,6 +6,7 @@ stages:
 
 before_script:
     - apt update -y -q
+    - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
 
 build:
     stage: build
@@ -16,8 +17,7 @@ publish:
   stage: publish
   script:
     - dotnet pack CozyBus/CozyBus.sln -c Release
-    - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
     - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab --skip-duplicate
-    - - dotnet nuget push "CozyBus/CozyBus.InMemory/bin/Release/*.nupkg" --source gitlab --skip-duplicate
+    - dotnet nuget push "CozyBus/CozyBus.InMemory/bin/Release/*.nupkg" --source gitlab --skip-duplicate
   only:
     - main
