@@ -51,19 +51,19 @@ namespace CozyBus.InMemory
             }, TaskScheduler.Default);
         }
 
-        private async Task ProcessEvent(string eventName, IBusMessage message)
+        private async Task ProcessEvent(string messageName, IBusMessage message)
         {
-            _logger.LogTrace("Processing RabbitMQ event: {EventName}", eventName);
+            _logger.LogTrace("Processing message: {EventName}", messageName);
 
-            if (_subscriptionsManager.HasSubscriptionsForEvent(eventName))
+            if (_subscriptionsManager.HasSubscriptionsForMessage(messageName))
             {
-                var subscriptions = _subscriptionsManager.GetHandlersForEvent(eventName);
+                var subscriptions = _subscriptionsManager.GetHandlersForMessage(messageName);
                 foreach (var subscription in subscriptions)
                 {
                     var handler = _handlerResolver.Resolve(subscription.HandlerType);
                     if (handler == null)
                         continue;
-                    var eventType = _subscriptionsManager.GetEventTypeByName(eventName);
+                    var eventType = _subscriptionsManager.GetMessageTypeByName(messageName);
                     var concreteType = typeof(IBusMessageHandler<>).MakeGenericType(eventType);
 
                     await Task.Yield();
@@ -71,15 +71,15 @@ namespace CozyBus.InMemory
                 }
             }
             else
-                _logger.LogWarning("No subscription for event: {EventName}", eventName);
+                _logger.LogWarning($"No subscription for message: {messageName}", messageName);
         }
 
         public void Unsubscribe<T, TH>()
             where T : IBusMessage
             where TH : IBusMessageHandler<T>
         {
-            var eventName = _subscriptionsManager.GetEventKey<T>();
-            _logger.LogInformation("Unsubscribing from event {EventName}", eventName);
+            var messageName = _subscriptionsManager.GetEventKey<T>();
+            _logger.LogInformation($"Unsubscribing from message {messageName}", messageName);
             _subscriptionsManager.RemoveSubscription<T, TH>();
         }
     }

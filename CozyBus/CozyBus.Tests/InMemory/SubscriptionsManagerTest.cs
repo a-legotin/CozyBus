@@ -21,7 +21,7 @@ namespace CozyBus.Tests.InMemory
             var inMemoryMessageBus = new InMemoryBus(handlerResolver.Object, logger.Object, subscriptionsManager);
             inMemoryMessageBus.Subscribe<TestMessage, TestMessageHandler>();
 
-            var handlers = subscriptionsManager.GetHandlersForEvent<TestMessage>();
+            var handlers = subscriptionsManager.GetHandlersForMessage<TestMessage>();
             
             Assert.IsNotNull(handlers);
             Assert.AreEqual(1, handlers.Count());
@@ -37,13 +37,16 @@ namespace CozyBus.Tests.InMemory
             var inMemoryMessageBus = new InMemoryBus(handlerResolver.Object, logger.Object, subscriptionsManager);
             inMemoryMessageBus.Subscribe<TestMessage, TestMessageHandler>();
 
-            var handlers = subscriptionsManager.GetHandlersForEvent<TestMessage>().ToArray();
+            var handlers = subscriptionsManager.GetHandlersForMessage<TestMessage>().ToArray();
 
             Assert.IsNotNull(handlers);
-            Assert.AreEqual(1, handlers.Count());
+            Assert.AreEqual(1, handlers.Length);
             
             inMemoryMessageBus.Unsubscribe<TestMessage, TestMessageHandler>();
-            Assert.Throws<KeyNotFoundException>(() =>subscriptionsManager.GetHandlersForEvent<TestMessage>());
+            handlers = subscriptionsManager.GetHandlersForMessage<TestMessage>().ToArray();
+
+            Assert.IsNotNull(handlers);
+            Assert.AreEqual(0, handlers.Length);
         }
     }
 }
