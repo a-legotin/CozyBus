@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CozyBus.Core
 {
-    public interface IEventBusSubscriptionsManager
+    public interface IMessageBusSubscriptionsManager
     {
         void AddSubscription<T, TH>()
             where T : IBusMessage
@@ -14,11 +14,11 @@ namespace CozyBus.Core
             where T : IBusMessage;
 
         void Clear();
-        string GetEventKey<T>();
+        string GetMessageKey<T>();
         IEnumerable<SubscriptionInfo> GetHandlersForMessage<T>() where T : IBusMessage;
         bool HasSubscriptionsForMessage<T>() where T : IBusMessage;
-        bool HasSubscriptionsForMessage(string eventName);
-        Type GetMessageTypeByName(string eventName);
-        IEnumerable<SubscriptionInfo> GetHandlersForMessage(string eventName);
+        bool HasSubscriptionsForMessage(string messageTypeName);
+        Type GetMessageTypeByName(string messageTypeName);
+        IEnumerable<SubscriptionInfo> GetHandlersForMessage(string messageTypeName);
     }
 }

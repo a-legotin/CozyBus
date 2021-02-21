@@ -8,7 +8,7 @@ namespace CozyBus.InMemory.Extensions
     {
         public static IServiceCollection UseInMemoryMessageBus(this IServiceCollection services)
         {
-            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+            services.AddSingleton<IMessageBusSubscriptionsManager, InMemoryMessageBusSubscriptionsManager>();
             services.AddSingleton<IMessageHandlerResolver, DefaultResolver>();
             services.AddSingleton<IMessageBus, InMemoryBus>();
             return services;
@@ -20,7 +20,7 @@ namespace CozyBus.InMemory.Extensions
             var options = new InMemoryBusOptionsBuilder();
             optionsAction?.Invoke(options);
             services.AddSingleton(options.GetResolver());
-            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+            services.AddSingleton<IMessageBusSubscriptionsManager, InMemoryMessageBusSubscriptionsManager>();
             services.AddSingleton<IMessageBus, InMemoryBus>();
             return services;
         }

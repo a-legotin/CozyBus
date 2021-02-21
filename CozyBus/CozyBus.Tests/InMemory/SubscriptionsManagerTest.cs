@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using CozyBus.Core;
 using CozyBus.InMemory;
@@ -16,23 +15,23 @@ namespace CozyBus.Tests.InMemory
         {
             var handlerResolver = new Mock<IMessageHandlerResolver>();
             var logger = new Mock<ILogger<IMessageBus>>();
-            var subscriptionsManager = new InMemoryEventBusSubscriptionsManager();
+            var subscriptionsManager = new InMemoryMessageBusSubscriptionsManager();
 
             var inMemoryMessageBus = new InMemoryBus(handlerResolver.Object, logger.Object, subscriptionsManager);
             inMemoryMessageBus.Subscribe<TestMessage, TestMessageHandler>();
 
             var handlers = subscriptionsManager.GetHandlersForMessage<TestMessage>();
-            
+
             Assert.IsNotNull(handlers);
             Assert.AreEqual(1, handlers.Count());
         }
-        
+
         [Test]
         public void Should_Add_Then_Remove_Handler()
         {
             var handlerResolver = new Mock<IMessageHandlerResolver>();
             var logger = new Mock<ILogger<IMessageBus>>();
-            var subscriptionsManager = new InMemoryEventBusSubscriptionsManager();
+            var subscriptionsManager = new InMemoryMessageBusSubscriptionsManager();
 
             var inMemoryMessageBus = new InMemoryBus(handlerResolver.Object, logger.Object, subscriptionsManager);
             inMemoryMessageBus.Subscribe<TestMessage, TestMessageHandler>();
@@ -41,7 +40,7 @@ namespace CozyBus.Tests.InMemory
 
             Assert.IsNotNull(handlers);
             Assert.AreEqual(1, handlers.Length);
-            
+
             inMemoryMessageBus.Unsubscribe<TestMessage, TestMessageHandler>();
             handlers = subscriptionsManager.GetHandlersForMessage<TestMessage>().ToArray();
 

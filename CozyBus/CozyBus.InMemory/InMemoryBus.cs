@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CozyBus.Core;
 using Microsoft.Extensions.Logging;
 
@@ -9,10 +8,10 @@ namespace CozyBus.InMemory
     {
         private readonly IMessageHandlerResolver _handlerResolver;
         private readonly ILogger<IMessageBus> _logger;
-        private readonly IEventBusSubscriptionsManager _subscriptionsManager;
+        private readonly IMessageBusSubscriptionsManager _subscriptionsManager;
 
         public InMemoryBus(IMessageHandlerResolver handlerResolver, ILogger<IMessageBus> logger,
-            IEventBusSubscriptionsManager subscriptionsManager)
+            IMessageBusSubscriptionsManager subscriptionsManager)
         {
             _handlerResolver = handlerResolver;
             _logger = logger;
@@ -26,9 +25,9 @@ namespace CozyBus.InMemory
 
         public void Subscribe<T, TH>() where T : IBusMessage where TH : IBusMessageHandler<T>
         {
-            var eventName = _subscriptionsManager.GetEventKey<T>();
-            _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}",
-                eventName,
+            var messageKey = _subscriptionsManager.GetMessageKey<T>();
+            _logger.LogInformation($"Subscribing to message {messageKey} with {typeof(TH)}",
+                messageKey,
                 nameof(TH));
             _subscriptionsManager.AddSubscription<T, TH>();
         }
@@ -40,7 +39,8 @@ namespace CozyBus.InMemory
 
         private void PublishAsyncCore<T>(IBusMessage message) where T : IBusMessage
         {
-            var publishTask = Task.Run(async () => await ProcessEvent(_subscriptionsManager.GetEventKey<T>(), message));
+            var publishTask = Task.Run(async () =>
+                await ProcessMessage(_subscriptionsManager.GetMessageKey<T>(), message));
             var tcs = new TaskCompletionSource();
             publishTask.ContinueWith(t =>
             {
@@ -51,9 +51,9 @@ namespace CozyBus.InMemory
             }, TaskScheduler.Default);
         }
 
-        private async Task ProcessEvent(string messageName, IBusMessage message)
+        private async Task ProcessMessage(string messageName, IBusMessage message)
         {
-            _logger.LogTrace("Processing message: {EventName}", messageName);
+            _logger.LogTrace($"Processing message: {messageName}", messageName);
 
             if (_subscriptionsManager.HasSubscriptionsForMessage(messageName))
             {
@@ -63,8 +63,8 @@ namespace CozyBus.InMemory
                     var handler = _handlerResolver.Resolve(subscription.HandlerType);
                     if (handler == null)
                         continue;
-                    var eventType = _subscriptionsManager.GetMessageTypeByName(messageName);
-                    var concreteType = typeof(IBusMessageHandler<>).MakeGenericType(eventType);
+                    var messageType = _subscriptionsManager.GetMessageTypeByName(messageName);
+                    var concreteType = typeof(IBusMessageHandler<>).MakeGenericType(messageType);
 
                     await Task.Yield();
                     await (Task) concreteType.GetMethod("Handle").Invoke(handler, new[] {message});
@@ -78,7 +78,7 @@ namespace CozyBus.InMemory
             where T : IBusMessage
             where TH : IBusMessageHandler<T>
         {
-            var messageName = _subscriptionsManager.GetEventKey<T>();
+            var messageName = _subscriptionsManager.GetMessageKey<T>();
             _logger.LogInformation($"Unsubscribing from message {messageName}", messageName);
             _subscriptionsManager.RemoveSubscription<T, TH>();
         }
