@@ -90,7 +90,6 @@ namespace CozyBus.Core
 
         private void RaiseOnEventRemoved(string eventName)
         {
-            
         }
 
 

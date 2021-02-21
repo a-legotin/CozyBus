@@ -1,14 +1,23 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CozyBus.Core;
 using Microsoft.Extensions.Logging;
 
 namespace CozyBus.InMemory
 {
-    public class InMemoryBus : IMessageBus
+    internal class InMemoryBus : IMessageBus
     {
-        private readonly IHandlerResolver _handlerResolver;
+        private readonly IServiceProvider _handlerResolver;
         private readonly ILogger<IMessageBus> _logger;
         private readonly IEventBusSubscriptionsManager _subscriptionsManager;
+
+        public InMemoryBus(IServiceProvider handlerResolver, ILogger<IMessageBus> logger,
+            IEventBusSubscriptionsManager subscriptionsManager)
+        {
+            _handlerResolver = handlerResolver;
+            _logger = logger;
+            _subscriptionsManager = subscriptionsManager;
+        }
 
         public void Publish<T>(IBusMessage message) where T : IBusMessage
         {
@@ -32,7 +41,6 @@ namespace CozyBus.InMemory
         private void PublishAsyncCore<T>(IBusMessage message) where T : IBusMessage
         {
             var publishTask = Task.Run(async () => await ProcessEvent(_subscriptionsManager.GetEventKey<T>(), message));
-
             var tcs = new TaskCompletionSource();
             publishTask.ContinueWith(t =>
             {
@@ -52,7 +60,7 @@ namespace CozyBus.InMemory
                 var subscriptions = _subscriptionsManager.GetHandlersForEvent(eventName);
                 foreach (var subscription in subscriptions)
                 {
-                    var handler = _handlerResolver.Resolve(subscription.HandlerType);
+                    var handler = _handlerResolver.GetService(subscription.HandlerType);
                     if (handler == null)
                         continue;
                     var eventType = _subscriptionsManager.GetEventTypeByName(eventName);
