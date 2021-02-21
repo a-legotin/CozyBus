@@ -11,13 +11,14 @@ before_script:
 build:
     stage: build
     script:
-        - dotnet build CozyBus/CozyBus.sln -c Release
+        - dotnet build CozyBus/CozyBus.sln -c Release --source gitlab
 
 publish:
   stage: publish
   script:
-    - dotnet pack CozyBus/CozyBus.sln -c Release
+    - dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release
     - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab --skip-duplicate
+    - dotnet pack CozyBus/CozyBus.sln -c Release --source gitlab
     - dotnet nuget push "CozyBus/CozyBus.InMemory/bin/Release/*.nupkg" --source gitlab --skip-duplicate
   only:
     - main
