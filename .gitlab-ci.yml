@@ -1,6 +1,8 @@
 image: mcr.microsoft.com/dotnet/sdk:5.0
 
 stages:
+    - build_core
+    - publish_core
     - build
     - test
     - publish
@@ -9,6 +11,20 @@ before_script:
     - apt update -y -q
     - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
 
+build_core:
+  stage: build_core
+  script:
+    - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
+    - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
+
+publish_core:
+  stage: publish_core
+  script:
+    - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
+    - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
+    - dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-build
+    - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab --skip-duplicate
+   
 build:
   stage: build
   script:
@@ -25,8 +41,6 @@ test:
 publish:
   stage: publish
   script:
-    - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
-    - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
     - dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-build
     - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab --skip-duplicate
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
