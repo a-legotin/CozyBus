@@ -15,10 +15,10 @@ namespace CozyBus.Core
 
         void Clear();
         string GetEventKey<T>();
-        IEnumerable<SubscriptionInfo> GetHandlersForEvent<T>() where T : IBusMessage;
-        bool HasSubscriptionsForEvent<T>() where T : IBusMessage;
-        bool HasSubscriptionsForEvent(string eventName);
-        Type GetEventTypeByName(string eventName);
-        IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName);
+        IEnumerable<SubscriptionInfo> GetHandlersForMessage<T>() where T : IBusMessage;
+        bool HasSubscriptionsForMessage<T>() where T : IBusMessage;
+        bool HasSubscriptionsForMessage(string eventName);
+        Type GetMessageTypeByName(string eventName);
+        IEnumerable<SubscriptionInfo> GetHandlersForMessage(string eventName);
     }
 }

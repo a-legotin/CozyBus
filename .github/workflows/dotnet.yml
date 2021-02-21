@@ -22,6 +22,8 @@ jobs:
       run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username  ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
     - name: Build
       run: dotnet build CozyBus/CozyBus.sln -c Release
+    - name: Test
+      run: dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj
       
   publish:
     runs-on: ubuntu-latest

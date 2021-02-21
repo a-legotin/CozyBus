@@ -7,11 +7,11 @@ namespace CozyBus.InMemory
 {
     internal class InMemoryBus : IMessageBus
     {
-        private readonly IServiceProvider _handlerResolver;
+        private readonly IMessageHandlerResolver _handlerResolver;
         private readonly ILogger<IMessageBus> _logger;
         private readonly IEventBusSubscriptionsManager _subscriptionsManager;
 
-        public InMemoryBus(IServiceProvider handlerResolver, ILogger<IMessageBus> logger,
+        public InMemoryBus(IMessageHandlerResolver handlerResolver, ILogger<IMessageBus> logger,
             IEventBusSubscriptionsManager subscriptionsManager)
         {
             _handlerResolver = handlerResolver;
@@ -60,7 +60,7 @@ namespace CozyBus.InMemory
                 var subscriptions = _subscriptionsManager.GetHandlersForEvent(eventName);
                 foreach (var subscription in subscriptions)
                 {
-                    var handler = _handlerResolver.GetService(subscription.HandlerType);
+                    var handler = _handlerResolver.Resolve(subscription.HandlerType);
                     if (handler == null)
                         continue;
                     var eventType = _subscriptionsManager.GetEventTypeByName(eventName);

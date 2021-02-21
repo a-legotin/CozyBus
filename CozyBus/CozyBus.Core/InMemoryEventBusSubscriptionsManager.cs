@@ -41,29 +41,29 @@ namespace CozyBus.Core
             DoRemoveHandler(eventName, handlerToRemove);
         }
 
-        public IEnumerable<SubscriptionInfo> GetHandlersForEvent<T>() where T : IBusMessage
+        public IEnumerable<SubscriptionInfo> GetHandlersForMessage<T>() where T : IBusMessage
         {
             var key = GetEventKey<T>();
-            return GetHandlersForEvent(key);
+            return GetHandlersForMessage(key);
         }
 
-        public IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName) => _handlers[eventName];
+        public IEnumerable<SubscriptionInfo> GetHandlersForMessage(string eventName) => _handlers[eventName];
 
-        public bool HasSubscriptionsForEvent<T>() where T : IBusMessage
+        public bool HasSubscriptionsForMessage<T>() where T : IBusMessage
         {
             var key = GetEventKey<T>();
-            return HasSubscriptionsForEvent(key);
+            return HasSubscriptionsForMessage(key);
         }
 
-        public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
+        public bool HasSubscriptionsForMessage(string eventName) => _handlers.ContainsKey(eventName);
 
-        public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
+        public Type GetMessageTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
 
         public string GetEventKey<T>() => typeof(T).Name;
 
         private void DoAddSubscription(Type handlerType, string eventName)
         {
-            if (!HasSubscriptionsForEvent(eventName))
+            if (!HasSubscriptionsForMessage(eventName))
                 _handlers.Add(eventName, new List<SubscriptionInfo>());
 
             if (_handlers[eventName].Any(s => s.HandlerType == handlerType))
@@ -85,13 +85,7 @@ namespace CozyBus.Core
             _handlers.Remove(eventName);
             var eventType = _eventTypes.SingleOrDefault(e => e.Name == eventName);
             if (eventType != null) _eventTypes.Remove(eventType);
-            RaiseOnEventRemoved(eventName);
         }
-
-        private void RaiseOnEventRemoved(string eventName)
-        {
-        }
-
 
         private SubscriptionInfo FindSubscriptionToRemove<T, TH>()
             where T : IBusMessage
@@ -102,7 +96,7 @@ namespace CozyBus.Core
         }
 
         private SubscriptionInfo DoFindSubscriptionToRemove(string eventName, Type handlerType) =>
-            !HasSubscriptionsForEvent(eventName)
+            !HasSubscriptionsForMessage(eventName)
                 ? null
                 : _handlers[eventName].SingleOrDefault(s => s.HandlerType == handlerType);
     }

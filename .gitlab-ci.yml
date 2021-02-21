@@ -3,6 +3,7 @@ image: mcr.microsoft.com/dotnet/sdk:5.0
 stages:
     - build
     - publish
+    - test
 
 before_script:
     - apt update -y -q
@@ -12,6 +13,10 @@ build:
     stage: build
     script:
         - dotnet build CozyBus/CozyBus.sln -c Release
+test:
+  stage: test
+  script:
+    - dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj
 
 publish:
   stage: publish

@@ -9,5 +9,11 @@
         <Version>1.0.1</Version>
         <RepositoryUrl>https://github.com/a-legotin/CozyBus</RepositoryUrl>
     </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>CozyBus.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
     
 </Project>
