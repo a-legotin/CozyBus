@@ -47,7 +47,10 @@ namespace CozyBus.Core
             return GetHandlersForMessage(key);
         }
 
-        public IEnumerable<SubscriptionInfo> GetHandlersForMessage(string eventName) => _handlers[eventName];
+        public IEnumerable<SubscriptionInfo> GetHandlersForMessage(string eventName) 
+            => _handlers.TryGetValue(eventName, out var handlers) 
+                ? handlers.ToArray()
+                : ArraySegment<SubscriptionInfo>.Empty;
 
         public bool HasSubscriptionsForMessage<T>() where T : IBusMessage
         {

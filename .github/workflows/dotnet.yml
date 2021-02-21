@@ -25,7 +25,7 @@ jobs:
     - name: Build
       run: dotnet build CozyBus/CozyBus.sln -c Release --no-restore
     - name: Test
-      run: dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj --no-build
+      run: dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj --no-restore
       
   publish:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
       - name: Build CozyBus.Core
         run: dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore
       - name: Pack CozyBus.Core
-        run: dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-build
+        run: dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release
       - name: Push generated CozyBus.Core package to GitHub registry
         run: dotnet nuget push CozyBus/CozyBus.Core/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
       - name: Restore All
