@@ -13,24 +13,24 @@ build:
   stage: build
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
-    - dotnet build CozyBus/CozyBus.sln -c Release --no-restore
+    - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
 
 test:
   stage: test
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
-    - dotnet build CozyBus/CozyBus.sln -c Release --no-restore
+    - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
     - dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj --no-build
 
 publish:
   stage: publish
   script:
     - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
-    - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore
+    - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
     - dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-build
     - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab --skip-duplicate
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
-    - dotnet build CozyBus/CozyBus.sln -c Release --no-restore
+    - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
     - dotnet pack CozyBus/CozyBus.sln -c Release --no-build
     - dotnet nuget push "CozyBus/CozyBus.InMemory/bin/Release/*.nupkg" --source gitlab --skip-duplicate
   only:
