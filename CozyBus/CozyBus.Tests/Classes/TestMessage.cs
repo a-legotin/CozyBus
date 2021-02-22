@@ -1,5 +1,5 @@
 ﻿using System;
-using CozyBus.Core;
+using CozyBus.Core.Messages;
 
 namespace CozyBus.Tests.Classes
 {

@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using CozyBus.Core.Handlers;
+using CozyBus.Core.Messages;
+using CozyBus.Core.Subscription;
 
-namespace CozyBus.Core
+namespace CozyBus.Core.Managers
 {
     public interface IMessageBusSubscriptionsManager
     {
+        bool IsEmpty { get; }
+        event EventHandler<string> OnEventRemoved;
+
         void AddSubscription<T, TH>()
             where T : IBusMessage
             where TH : IBusMessageHandler<T>;

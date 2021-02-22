@@ -2,8 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using CozyBus.Core.Handlers;
+using CozyBus.Core.Messages;
+using CozyBus.Core.Subscription;
 
-namespace CozyBus.Core
+namespace CozyBus.Core.Managers
 {
     public class InMemoryMessageBusSubscriptionsManager : IMessageBusSubscriptionsManager
     {
@@ -18,6 +21,7 @@ namespace CozyBus.Core
 
         public bool IsEmpty => !_handlers.Keys.Any();
         public void Clear() => _handlers.Clear();
+        public event EventHandler<string> OnEventRemoved;
 
         public void AddSubscription<T, TH>()
             where T : IBusMessage
@@ -88,7 +92,16 @@ namespace CozyBus.Core
                 return;
             _handlers.Remove(messageTypeName);
             var messageType = _messageTypes.SingleOrDefault(e => e.Name == messageTypeName);
-            if (messageType != null) _messageTypes.Remove(messageType);
+            if (messageType == null)
+                return;
+            _messageTypes.Remove(messageType);
+            RaiseOnEventRemoved(messageTypeName);
+        }
+
+        private void RaiseOnEventRemoved(string messageTypeName)
+        {
+            var handler = OnEventRemoved;
+            handler?.Invoke(this, messageTypeName);
         }
 
         private SubscriptionInfo FindSubscriptionToRemove<T, TH>()

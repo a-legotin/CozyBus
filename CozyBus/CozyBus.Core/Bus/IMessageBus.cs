@@ -1,6 +1,8 @@
 ﻿using System;
+using CozyBus.Core.Handlers;
+using CozyBus.Core.Messages;
 
-namespace CozyBus.Core
+namespace CozyBus.Core.Bus
 {
     public interface IMessageBus : IDisposable
     {

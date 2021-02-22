@@ -36,7 +36,7 @@ test:
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
-    - dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj --no-build
+    - dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj --no-restore
 
 publish:
   stage: publish

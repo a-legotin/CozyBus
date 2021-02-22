@@ -4,7 +4,7 @@ using CozyBus.Core.Handlers;
 using CozyBus.Core.Managers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CozyBus.InMemory.Extensions
+namespace CozyBus.RabbitMQ.Extensions
 {
     public static class DependencyInjection
     {
@@ -12,7 +12,7 @@ namespace CozyBus.InMemory.Extensions
         {
             services.AddSingleton<IMessageBusSubscriptionsManager, InMemoryMessageBusSubscriptionsManager>();
             services.AddSingleton<IMessageHandlerResolver, DefaultResolver>();
-            services.AddSingleton<IMessageBus, InMemoryBus>();
+            services.AddSingleton<IMessageBus, MessageBusRabbitMQ>();
             return services;
         }
 
@@ -23,7 +23,7 @@ namespace CozyBus.InMemory.Extensions
             optionsAction?.Invoke(options);
             services.AddSingleton(options.GetResolver());
             services.AddSingleton<IMessageBusSubscriptionsManager, InMemoryMessageBusSubscriptionsManager>();
-            services.AddSingleton<IMessageBus, InMemoryBus>();
+            services.AddSingleton<IMessageBus, MessageBusRabbitMQ>();
             return services;
         }
     }

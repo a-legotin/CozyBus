@@ -1,5 +1,7 @@
 using System.Linq;
-using CozyBus.Core;
+using CozyBus.Core.Bus;
+using CozyBus.Core.Handlers;
+using CozyBus.Core.Managers;
 using CozyBus.InMemory;
 using CozyBus.Tests.Classes;
 using Microsoft.Extensions.Logging;

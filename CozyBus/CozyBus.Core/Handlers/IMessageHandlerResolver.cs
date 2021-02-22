@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CozyBus.Core
+namespace CozyBus.Core.Handlers
 {
     public interface IMessageHandlerResolver
     {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using CozyBus.Core;
+using CozyBus.Core.Handlers;
 
 namespace CozyBus.Tests.Classes
 {

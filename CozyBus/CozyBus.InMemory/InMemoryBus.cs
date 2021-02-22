@@ -1,5 +1,8 @@
 ﻿using System.Threading.Tasks;
-using CozyBus.Core;
+using CozyBus.Core.Bus;
+using CozyBus.Core.Handlers;
+using CozyBus.Core.Managers;
+using CozyBus.Core.Messages;
 using Microsoft.Extensions.Logging;
 
 namespace CozyBus.InMemory
