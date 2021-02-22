@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 
 namespace CozyBus.RabbitMQ
 {
-    public interface IRabbitMQPersistentConnection : IDisposable
+    internal interface IRabbitMQPersistentConnection : IDisposable
     {
         bool IsConnected { get; }
 

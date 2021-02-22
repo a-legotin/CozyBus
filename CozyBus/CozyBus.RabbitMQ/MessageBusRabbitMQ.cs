@@ -7,6 +7,7 @@ using CozyBus.Core.Bus;
 using CozyBus.Core.Handlers;
 using CozyBus.Core.Managers;
 using CozyBus.Core.Messages;
+using CozyBus.RabbitMQ.Classes;
 using Microsoft.Extensions.Logging;
 using Polly;
 using RabbitMQ.Client;
@@ -17,7 +18,8 @@ namespace CozyBus.RabbitMQ
 {
     internal class MessageBusRabbitMQ : IMessageBus
     {
-        private const string BROKER_NAME = nameof(MessageBusRabbitMQ);
+        private const string DEFAULT_BROKER_NAME = nameof(MessageBusRabbitMQ) + "_broker";
+        private const string DEFAULT_QUEUE_NAME = nameof(MessageBusRabbitMQ) + "_queue";
         private readonly string _brokerName;
         private readonly IMessageHandlerResolver _handlerResolver;
         private readonly ILogger<IMessageBus> _logger;
@@ -31,19 +33,19 @@ namespace CozyBus.RabbitMQ
             ILogger<IMessageBus> logger,
             IMessageBusSubscriptionsManager subsManager,
             IMessageHandlerResolver handlerResolver,
-            string queueName = null,
-            string brokerName = BROKER_NAME,
-            int retryCount = 5)
+            IRetryPolicy retryPolicy,
+            IQueueOptions queueOptions,
+            IBrokerOptions brokerOptions)
         {
             _persistentConnection =
                 persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _handlerResolver = handlerResolver;
             _subscriptionsManager = subsManager ?? new InMemoryMessageBusSubscriptionsManager();
-            _queueName = queueName;
-            _brokerName = brokerName;
+            _queueName = queueOptions?.QueueName ?? DEFAULT_QUEUE_NAME;
+            _brokerName = brokerOptions?.BrokerName ?? DEFAULT_BROKER_NAME;
             _consumerChannel = CreateConsumerChannel();
-            _retryCount = retryCount;
+            _retryCount = retryPolicy.RetryCount;
             _subscriptionsManager.OnEventRemoved += SubsManager_OnEventRemoved;
         }
 
@@ -59,10 +61,7 @@ namespace CozyBus.RabbitMQ
         {
             var messageTypeName = _subscriptionsManager.GetMessageKey<T>();
             DoInternalSubscription(messageTypeName);
-
-            _logger.LogInformation($"Subscribing to event {messageTypeName} with {typeof(TH)}", messageTypeName,
-                typeof(TH).FullName);
-
+            _logger.LogInformation($"Subscribing to message {messageTypeName} with {typeof(TH)}");
             _subscriptionsManager.AddSubscription<T, TH>();
             StartBasicConsume();
         }
@@ -77,18 +76,16 @@ namespace CozyBus.RabbitMQ
                     (ex, time) =>
                     {
                         _logger.LogWarning(ex,
-                            "Could not publish event: {EventId} after {Timeout}s ({ExceptionMessage})", message.Id,
-                            $"{time.TotalSeconds:n1}", ex.Message);
+                            $"Could not publish event: {message} after {time.TotalSeconds:n1}s ({ex.Message})");
                     });
 
             var messageTypeName = message.GetType().Name;
 
-            _logger.LogTrace("Creating RabbitMQ channel to publish event: {EventId} ({messageTypeName})", message.Id,
-                messageTypeName);
+            _logger.LogTrace($"Creating RabbitMQ channel to publish message: {messageTypeName}");
 
             using (var channel = _persistentConnection.CreateModel())
             {
-                _logger.LogTrace($"Declaring RabbitMQ exchange to publish event: {messageTypeName}", message.Id);
+                _logger.LogTrace($"Declaring RabbitMQ exchange to publish message: {messageTypeName}");
 
                 channel.ExchangeDeclare(_brokerName, "direct");
 
@@ -100,7 +97,7 @@ namespace CozyBus.RabbitMQ
                     var properties = channel.CreateBasicProperties();
                     properties.DeliveryMode = 2; // persistent
 
-                    _logger.LogTrace($"Publishing event to RabbitMQ: {messageTypeName}", message.Id);
+                    _logger.LogTrace($"Publishing message to RabbitMQ: {messageTypeName}");
 
                     channel.BasicPublish(
                         _brokerName,
@@ -153,7 +150,7 @@ namespace CozyBus.RabbitMQ
         {
             var messageTypeName = _subscriptionsManager.GetMessageKey<T>();
 
-            _logger.LogInformation($"Unsubscribing from event {messageTypeName}", messageTypeName);
+            _logger.LogInformation($"Unsubscribing from message {messageTypeName}");
 
             _subscriptionsManager.RemoveSubscription<T, TH>();
         }
@@ -190,11 +187,11 @@ namespace CozyBus.RabbitMQ
                 if (message.ToLowerInvariant().Contains("throw-fake-exception"))
                     throw new InvalidOperationException($"Fake exception requested: \"{message}\"");
 
-                await ProcessEvent(messageTypeName, message);
+                await ProcessMessage(messageTypeName, message);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "----- ERROR Processing message \"{Message}\"", message);
+                _logger.LogWarning(ex, $"----- ERROR Processing message \"{message}\"");
             }
 
             // Even on exception we take the message off the queue.
@@ -232,9 +229,9 @@ namespace CozyBus.RabbitMQ
             return channel;
         }
 
-        private async Task ProcessEvent(string messageTypeName, string message)
+        private async Task ProcessMessage(string messageTypeName, string messageSerialized)
         {
-            _logger.LogTrace("Processing RabbitMQ event: {messageTypeName}", messageTypeName);
+            _logger.LogTrace($"Processing RabbitMQ message: {messageTypeName}");
 
             if (_subscriptionsManager.HasSubscriptionsForMessage(messageTypeName))
             {
@@ -246,13 +243,13 @@ namespace CozyBus.RabbitMQ
                         continue;
                     var messageType = _subscriptionsManager.GetMessageTypeByName(messageTypeName);
                     var concreteType = typeof(IBusMessageHandler<>).MakeGenericType(messageType);
-
+                    var message = JsonSerializer.Deserialize(messageSerialized, messageType);
                     await Task.Yield();
                     await (Task) concreteType.GetMethod("Handle").Invoke(handler, new[] {message});
                 }
             }
             else
-                _logger.LogWarning("No subscription for RabbitMQ event: {messageTypeName}", messageTypeName);
+                _logger.LogWarning($"No subscription for RabbitMQ message: {messageTypeName}");
         }
     }
 }

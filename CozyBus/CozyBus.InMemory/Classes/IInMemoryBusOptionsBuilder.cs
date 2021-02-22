@@ -1,6 +1,6 @@
 ﻿using CozyBus.Core.Handlers;
 
-namespace CozyBus.RabbitMQ.Extensions
+namespace CozyBus.InMemory.Classes
 {
     public interface IInMemoryBusOptionsBuilder
     {

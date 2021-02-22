@@ -2,6 +2,7 @@
 using CozyBus.Core.Bus;
 using CozyBus.Core.Handlers;
 using CozyBus.Core.Managers;
+using CozyBus.InMemory.Classes;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CozyBus.InMemory.Extensions

@@ -1,7 +1,7 @@
 ﻿using System;
 using CozyBus.Core.Handlers;
 
-namespace CozyBus.RabbitMQ.Extensions
+namespace CozyBus.InMemory.Classes
 {
     internal class DefaultResolver : IMessageHandlerResolver
     {
