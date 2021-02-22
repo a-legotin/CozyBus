@@ -4,6 +4,6 @@ namespace CozyBus.Core.Handlers
 {
     public interface IMessageHandlerResolver
     {
-        Type Resolve(Type handlerType);
+        object Resolve(Type handlerType);
     }
 }

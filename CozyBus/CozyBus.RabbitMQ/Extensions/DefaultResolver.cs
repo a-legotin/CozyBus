@@ -9,6 +9,6 @@ namespace CozyBus.RabbitMQ.Extensions
 
         public DefaultResolver(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
-        public Type Resolve(Type handlerType) => _serviceProvider.GetService(handlerType) as Type;
+        public object Resolve(Type handlerType) => _serviceProvider.GetService(handlerType);
     }
 }

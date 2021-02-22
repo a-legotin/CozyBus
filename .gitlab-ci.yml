@@ -41,8 +41,6 @@ test:
 publish:
   stage: publish
   script:
-    - dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-build
-    - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/*.nupkg" --source gitlab --skip-duplicate
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
     - dotnet pack CozyBus/CozyBus.sln -c Release --no-build
