@@ -16,6 +16,12 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CozyBus.RabbitMQ", "CozyBus.RabbitMQ\CozyBus.RabbitMQ.csproj", "{BDAC63A3-F098-4076-B159-08C01631BAA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CozyBus.Kafka", "CozyBus.Kafka\CozyBus.Kafka.csproj", "{4560C50D-9CBB-4EB1-BE2D-DC9176E5854F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CozyBus.AzureServiceBus", "CozyBus.AzureServiceBus\CozyBus.AzureServiceBus.csproj", "{30455419-CDCD-4F82-8804-811601E7D082}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CozyBus.AmazonSQS", "CozyBus.AmazonSQS\CozyBus.AmazonSQS.csproj", "{9EBA401A-B183-481C-B868-D0C05436B6DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,5 +44,17 @@ Global
 		{BDAC63A3-F098-4076-B159-08C01631BAA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDAC63A3-F098-4076-B159-08C01631BAA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDAC63A3-F098-4076-B159-08C01631BAA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4560C50D-9CBB-4EB1-BE2D-DC9176E5854F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4560C50D-9CBB-4EB1-BE2D-DC9176E5854F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4560C50D-9CBB-4EB1-BE2D-DC9176E5854F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4560C50D-9CBB-4EB1-BE2D-DC9176E5854F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30455419-CDCD-4F82-8804-811601E7D082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30455419-CDCD-4F82-8804-811601E7D082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30455419-CDCD-4F82-8804-811601E7D082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30455419-CDCD-4F82-8804-811601E7D082}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EBA401A-B183-481C-B868-D0C05436B6DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EBA401A-B183-481C-B868-D0C05436B6DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EBA401A-B183-481C-B868-D0C05436B6DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EBA401A-B183-481C-B868-D0C05436B6DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
