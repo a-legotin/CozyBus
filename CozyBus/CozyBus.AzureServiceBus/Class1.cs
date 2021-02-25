@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CozyBus.AzureServiceBus
+﻿namespace CozyBus.AzureServiceBus
 {
     public class Class1
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CozyBus.AmazonSQS
+﻿namespace CozyBus.AmazonSQS
 {
     public class Class1
     {
