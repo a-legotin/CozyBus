@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using CozyBus.Core.Bus;
 using CozyBus.Core.Handlers;
 using CozyBus.Core.Managers;
 using CozyBus.Core.Messages;
+using CozyBus.Kafka.Classes;
 using Microsoft.Extensions.Logging;
 using Polly;
 
@@ -15,18 +15,30 @@ namespace CozyBus.Kafka
 {
     internal class KafkaMessageBus : IMessageBus
     {
-        private readonly IDictionary<string, object> _consumerConfig;
-
+        private readonly IConsumer<Ignore, string> _consumer;
         private readonly IMessageHandlerResolver _handlerResolver;
         private readonly ILogger<IMessageBus> _logger;
-        private readonly IProducer<Null, string> _producer;
 
-        private readonly IDictionary<string, object> _producerConfig;
+        private readonly IProducer<Ignore, string> _producer;
         private readonly int _retryCount;
         private readonly IMessageBusSubscriptionsManager _subscriptionsManager;
 
         private readonly string _topic;
-        private readonly IConsumer<Null, string> _consumer;
+
+        public KafkaMessageBus(IMessageHandlerResolver handlerResolver,
+            ILogger<IMessageBus> logger,
+            IMessageBusSubscriptionsManager subscriptionsManager,
+            IProducer<Ignore, string> producer,
+            IConsumer<Ignore, string> consumer,
+            IKafkaTopicOptions kafkaTopicOptions)
+        {
+            _handlerResolver = handlerResolver;
+            _logger = logger;
+            _subscriptionsManager = subscriptionsManager;
+            _producer = producer;
+            _consumer = consumer;
+            _topic = kafkaTopicOptions.TopicName;
+        }
 
         public void Subscribe<T, TH>() where T : IBusMessage where TH : IBusMessageHandler<T>
         {
@@ -57,7 +69,7 @@ namespace CozyBus.Kafka
             policy.Execute(() =>
             {
                 _logger.LogTrace($"Publishing message to Kafka: {messageTypeName}");
-                _producer.Produce(_topic, new Message<Null, string>
+                _producer.Produce(_topic, new Message<Ignore, string>
                 {
                     Value = messageSerialized
                 });
