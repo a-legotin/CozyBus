@@ -55,3 +55,7 @@ jobs:
         run: dotnet pack CozyBus/CozyBus.sln -c Release --no-build
       - name: Push generated CozyBus.InMemory package to GitHub registry
         run: dotnet nuget push CozyBus/CozyBus.InMemory/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+      - name: Push generated CozyBus.RabbitMQ package to GitHub registry
+        run: dotnet nuget push CozyBus/CozyBus.RabbitMQ/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+      - name: Push generated CozyBus.Kafka package to GitHub registry
+        run: dotnet nuget push CozyBus/CozyBus.Kafka/bin/Release/*.nupkg --source github --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
