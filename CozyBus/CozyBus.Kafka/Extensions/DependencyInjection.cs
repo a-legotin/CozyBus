@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Confluent.Kafka;
 using CozyBus.Core.Bus;
 using CozyBus.Core.Managers;
@@ -15,17 +16,22 @@ namespace CozyBus.Kafka.Extensions
             var options = new KafkaOptionsBuilder();
             optionsAction?.Invoke(options);
 
-            var producerConfig = new ProducerConfig {BootstrapServers = options.BootstrapServers};
-            var producer = new ProducerBuilder<Ignore, string>(producerConfig).Build();
+            var producerConfig = new ProducerConfig
+            {
+                BootstrapServers = options.BootstrapServers,
+                ClientId = Dns.GetHostName()
+            };
+            var producer = new ProducerBuilder<string, string>(producerConfig).Build();
             services.AddSingleton(producer);
 
 
             var config = new ConsumerConfig
             {
-                BootstrapServers = options.BootstrapServers
+                BootstrapServers = options.BootstrapServers,
+                GroupId = "cozy-consumer"
             };
 
-            var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+            var consumer = new ConsumerBuilder<string, string>(config).Build();
             services.AddSingleton(consumer);
 
             services.AddSingleton<IKafkaTopicOptions>(options);

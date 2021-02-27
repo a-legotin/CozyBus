@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using CozyBus.Core.Bus;
@@ -15,11 +16,12 @@ namespace CozyBus.Kafka
 {
     internal class KafkaMessageBus : IMessageBus
     {
-        private readonly IConsumer<Ignore, string> _consumer;
+        private readonly CancellationToken _cancellationToken;
+        private readonly IConsumer<string, string> _consumer;
         private readonly IMessageHandlerResolver _handlerResolver;
         private readonly ILogger<IMessageBus> _logger;
 
-        private readonly IProducer<Ignore, string> _producer;
+        private readonly IProducer<string, string> _producer;
         private readonly int _retryCount;
         private readonly IMessageBusSubscriptionsManager _subscriptionsManager;
 
@@ -28,8 +30,8 @@ namespace CozyBus.Kafka
         public KafkaMessageBus(IMessageHandlerResolver handlerResolver,
             ILogger<IMessageBus> logger,
             IMessageBusSubscriptionsManager subscriptionsManager,
-            IProducer<Ignore, string> producer,
-            IConsumer<Ignore, string> consumer,
+            IProducer<string, string> producer,
+            IConsumer<string, string> consumer,
             IKafkaTopicOptions kafkaTopicOptions)
         {
             _handlerResolver = handlerResolver;
@@ -38,6 +40,9 @@ namespace CozyBus.Kafka
             _producer = producer;
             _consumer = consumer;
             _topic = kafkaTopicOptions.TopicName;
+            _retryCount = 5;
+            _cancellationToken = new CancellationToken();
+            StartConsumeBasic();
         }
 
         public void Subscribe<T, TH>() where T : IBusMessage where TH : IBusMessageHandler<T>
@@ -66,13 +71,26 @@ namespace CozyBus.Kafka
 
             var messageSerialized = JsonSerializer.Serialize(message);
 
+
             policy.Execute(() =>
             {
                 _logger.LogTrace($"Publishing message to Kafka: {messageTypeName}");
-                _producer.Produce(_topic, new Message<Ignore, string>
+                Task.Run(async () =>
                 {
-                    Value = messageSerialized
-                });
+                    try
+                    {
+                        var dr = await _producer.ProduceAsync(_topic, new Message<string, string>
+                        {
+                            Key = messageTypeName,
+                            Value = messageSerialized
+                        }, _cancellationToken);
+                        _logger.LogTrace($"Publishing message to Kafka with result: {dr}");
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError($"Failed to publish message to Kafka {e.Message}");
+                    }
+                }, _cancellationToken);
             });
         }
 
@@ -82,7 +100,35 @@ namespace CozyBus.Kafka
             _consumer?.Dispose();
         }
 
-        private async Task ProcessMessage(string messageName, IBusMessage message)
+        private void StartConsumeBasic()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    _consumer.Subscribe(_topic);
+
+                    while (true)
+                    {
+                        try
+                        {
+                            var cr = _consumer.Consume(_cancellationToken);
+                            _logger.LogTrace($"Consumed message '{cr.Message.Value}' at: '{cr.TopicPartitionOffset}'.");
+                            await ProcessMessage(cr.Message.Key, cr.Message.Value);
+                        }
+                        catch (ConsumeException e)
+                        {
+                            _logger.LogError($"Error occurred in Kafka consumer: {e.Error.Reason}");
+                        }
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                }
+            });
+        }
+
+        private async Task ProcessMessage(string messageName, string messageSerialized)
         {
             _logger.LogTrace($"Processing message: {messageName}", messageName);
 
@@ -96,6 +142,7 @@ namespace CozyBus.Kafka
                         continue;
                     var messageType = _subscriptionsManager.GetMessageTypeByName(messageName);
                     var concreteType = typeof(IBusMessageHandler<>).MakeGenericType(messageType);
+                    var message = JsonSerializer.Deserialize(messageSerialized, messageType);
 
                     await Task.Yield();
                     await (Task) concreteType.GetMethod("Handle").Invoke(handler, new[] {message});
