@@ -1,5 +1,6 @@
 ﻿using System;
 using CozyBus.Core.Bus;
+using CozyBus.Core.Handlers;
 using CozyBus.Core.Managers;
 using CozyBus.RabbitMQ.Classes;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,9 +31,13 @@ namespace CozyBus.RabbitMQ.Extensions
             services.AddSingleton<IConnectionOptions>(options);
             services.AddSingleton<IQueueOptions>(options);
             services.AddSingleton<IRabbitMQPersistentConnection, DefaultRabbitMQPersistentConnection>();
-            services.AddSingleton(options.GetResolver());
             services.AddSingleton<IMessageBusSubscriptionsManager, InMemoryMessageBusSubscriptionsManager>();
             services.AddSingleton<IMessageBus, MessageBusRabbitMQ>();
+            if (!options.IsCustomResolver)
+            {
+                services.AddSingleton<IMessageHandlerResolver, DefaultResolver>();
+                services.AddSingleton(sp => sp);
+            }
             return services;
         }
     }

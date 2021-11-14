@@ -4,7 +4,7 @@ namespace CozyBus.RabbitMQ.Classes
 {
     public interface IRabbitMqOptionsBuilder
     {
-        void UseResolver<T>() where T : IMessageHandlerResolver;
+        IRabbitMqOptionsBuilder UseCustomResolver();
         IRabbitMqOptionsBuilder WithConnection(string connection);
         IRabbitMqOptionsBuilder WithBrokerName(string brokerName);
         IRabbitMqOptionsBuilder WithQueueName(string queueName);

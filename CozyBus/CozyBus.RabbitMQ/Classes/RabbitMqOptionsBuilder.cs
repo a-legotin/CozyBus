@@ -9,7 +9,7 @@ namespace CozyBus.RabbitMQ.Classes
         IBrokerOptions,
         IConnectionOptions
     {
-        private Type _resolver = typeof(DefaultResolver);
+        private bool _useCustomResolver;
         public string BrokerName { get; set; }
         public string MessageBusConnection { get; private set; }
         public int MessageBusPort { get; private set; }
@@ -18,9 +18,10 @@ namespace CozyBus.RabbitMQ.Classes
 
         public string QueueName { get; set; }
 
-        public void UseResolver<T>() where T : IMessageHandlerResolver
+        public IRabbitMqOptionsBuilder UseCustomResolver()
         {
-            _resolver = typeof(T);
+            _useCustomResolver = true;
+            return this;
         }
 
         public IRabbitMqOptionsBuilder WithConnection(string connection)
@@ -67,6 +68,6 @@ namespace CozyBus.RabbitMQ.Classes
 
         public short RetryCount { get; private set; }
 
-        internal Type GetResolver() => _resolver;
+        internal bool IsCustomResolver => _useCustomResolver;
     }
 }
