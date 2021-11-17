@@ -36,7 +36,6 @@ namespace CozyBus.RabbitMQ.Extensions
             if (!options.IsCustomResolver)
             {
                 services.AddSingleton<IMessageHandlerResolver, DefaultResolver>();
-                services.AddSingleton(sp => sp);
             }
             return services;
         }

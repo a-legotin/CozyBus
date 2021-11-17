@@ -13,12 +13,16 @@ before_script:
 
 build_core:
   stage: build_core
+  tags:
+    - k8s
   script:
     - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
     - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
 
 publish_core:
   stage: publish_core
+  tags:
+    - k8s
   script:
     - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
     - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
@@ -27,12 +31,16 @@ publish_core:
    
 build:
   stage: build
+  tags:
+    - k8s
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
 
 test:
   stage: test
+  tags:
+    - k8s
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
@@ -40,6 +48,8 @@ test:
 
 publish:
   stage: publish
+  tags:
+    - k8s
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
