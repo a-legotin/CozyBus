@@ -89,7 +89,7 @@ namespace CozyBus.RabbitMQ
 
                 channel.ExchangeDeclare(_brokerName, "direct");
 
-                var messageSerialized = JsonSerializer.Serialize(message);
+                var messageSerialized = JsonSerializer.Serialize(message, message.GetType());
                 var body = Encoding.UTF8.GetBytes(messageSerialized);
 
                 policy.Execute(() =>
