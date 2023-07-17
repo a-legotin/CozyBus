@@ -48,7 +48,7 @@ test:
     - dotnet test CozyBus/CozyBus.Tests/CozyBus.Tests.csproj --no-restore
 
 publish_remaining:
-  stage: publish
+  stage: publish_remaining
   tags:
     - docker
   script:
