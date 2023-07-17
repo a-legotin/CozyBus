@@ -14,7 +14,7 @@ before_script:
 build_core:
   stage: build_core
   tags:
-    - k8s
+    - docker
   script:
     - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
     - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
@@ -22,7 +22,7 @@ build_core:
 publish_core:
   stage: publish_core
   tags:
-    - k8s
+    - docker
   script:
     - dotnet restore CozyBus/CozyBus.Core/CozyBus.Core.csproj --locked-mode
     - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
@@ -32,7 +32,7 @@ publish_core:
 build:
   stage: build
   tags:
-    - k8s
+    - docker
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
@@ -40,7 +40,7 @@ build:
 test:
   stage: test
   tags:
-    - k8s
+    - docker
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
@@ -49,13 +49,13 @@ test:
 publish:
   stage: publish
   tags:
-    - k8s
+    - docker
   script:
     - dotnet restore CozyBus/CozyBus.sln --locked-mode
     - dotnet build CozyBus/CozyBus.sln -c Release --no-restore --no-dependencies
     - dotnet pack CozyBus/CozyBus.sln -c Release --no-build
-    - dotnet nuget push "CozyBus/CozyBus.InMemory/bin/Release/*.nupkg" --source gitlab --skip-duplicate
-    - dotnet nuget push "CozyBus/CozyBus.RabbitMQ/bin/Release/*.nupkg" --source gitlab --skip-duplicate
-    - dotnet nuget push "CozyBus/CozyBus.Kafka/bin/Release/*.nupkg" --source gitlab --skip-duplicate
+    - dotnet nuget push "CozyBus/CozyBus.InMemory/bin/Release/CozyBus.InMemory*.nupkg" --source gitlab --skip-duplicate
+    - dotnet nuget push "CozyBus/CozyBus.RabbitMQ/bin/Release/CozyBus.RabbitMQ*.nupkg" --source gitlab --skip-duplicate
+    - dotnet nuget push "CozyBus/CozyBus.Kafka/bin/Release/CozyBus.Kafka*.nupkg" --source gitlab --skip-duplicate
   only:
     - main
