@@ -6,8 +6,11 @@
 
     <PropertyGroup>
         <PackageId>CozyBus.Core</PackageId>
-        <Version>1.0.8</Version>
+        <Version>1.0.9</Version>
+        <Authors>Alexander Legotin</Authors>
+        <Company>EZlab</Company>
         <RepositoryUrl>https://github.com/a-legotin/CozyBus</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
