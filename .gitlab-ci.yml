@@ -28,7 +28,7 @@ publish_core:
     - dotnet build CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-restore --no-dependencies
     - dotnet pack CozyBus/CozyBus.Core/CozyBus.Core.csproj -c Release --no-build
     - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/CozyBus.Core*.nupkg" --source gitlab --skip-duplicate
-    - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/CozyBus.Core*.nupkg" --source nuget.org --skip-duplicate
+    - dotnet nuget push "CozyBus/CozyBus.Core/bin/Release/CozyBus.Core*.nupkg" --source nuget.org --skip-duplicate --api-key $NUGET_API_KEY
    
 build:
   stage: build
